@@ -17,8 +17,7 @@ namespace Sistema_Hospital
     public partial class Login : Form
     {
         //variables
-        string usuario;
-        string password;
+        
 
         public static void Logearse(string usuario, string password)
         {
@@ -68,7 +67,7 @@ namespace Sistema_Hospital
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 MessageBox.Show("Error al iniciar sesión", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
