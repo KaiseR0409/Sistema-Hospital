@@ -46,11 +46,22 @@ namespace Sistema_Hospital
         {
             try
             {
-                
+
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
-                    string query = "SELECT RutPaciente,IdMedico,FechaHora,Estado,NotasMedicas FROM cita;"; // Asegúrate de que la tabla 'citas' exista en tu base de datos
+                    string query = @"SELECT 
+                    c.RutPaciente,
+                    c.IdMedico,
+                    c.FechaHora,
+                    c.Estado,
+                    c.NotasMedicas,
+                    CASE
+                        WHEN c.NotasMedicas LIKE '%infarto%' OR c.NotasMedicas LIKE '%fractura%' THEN 'Grave'
+                        WHEN c.NotasMedicas LIKE '%dolor%' OR c.NotasMedicas LIKE '%fiebre%' THEN 'Moderado'
+                        ELSE 'Leve'
+                    END AS Gravedad
+                 FROM cita c;";
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         MySqlDataAdapter adapter = new MySqlDataAdapter(command);
@@ -61,7 +72,7 @@ namespace Sistema_Hospital
                     connection.Close();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Error al cargar las citas: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -130,7 +141,7 @@ namespace Sistema_Hospital
                 string query = "SELECT RutPaciente,IdMedico,FechaHora,Estado,NotasMedicas from cita;"; // Consulta para obtener todas las citas
                 using (MySqlCommand cmd = new MySqlCommand(query, conn)) // Ejecuta la consulta para obtener todas las citas
                 {
-                    
+
 
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd); // Crea un adaptador para llenar el DataTable
                     DataTable citasTable = new DataTable(); // Crea un DataTable para almacenar los resultados
@@ -140,6 +151,32 @@ namespace Sistema_Hospital
                 }
             }
 
+        }
+        private void dgvCitas_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == dgvCitas.Columns["Gravedad"].Index && e.Value != null)
+            {
+                string gravedad = e.Value.ToString();
+                switch (gravedad)
+                {
+                    case "Grave":
+                        e.CellStyle.BackColor = Color.Red;
+                        e.CellStyle.ForeColor = Color.White;
+                        break;
+                    case "Moderado":
+                        e.CellStyle.BackColor = Color.Yellow;
+                        e.CellStyle.ForeColor = Color.Black;
+                        break;
+                    case "Leve":
+                        e.CellStyle.BackColor = Color.Green;
+                        e.CellStyle.ForeColor = Color.White;
+                        break;
+                    default:
+                        e.CellStyle.BackColor = Color.White;
+                        e.CellStyle.ForeColor = Color.Black;
+                        break;
+                }
+            }
         }
     }
 }
