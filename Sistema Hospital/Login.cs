@@ -108,6 +108,7 @@ namespace Sistema_Hospital
             if (!string.IsNullOrEmpty(usuario) ||!string.IsNullOrEmpty(password))
             {
                 Logearse(usuario, password);
+                this.Hide(); // Oculta el formulario de inicio de sesión después de iniciar sesión
             }
             else
             {

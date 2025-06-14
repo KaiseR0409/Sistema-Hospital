@@ -46,13 +46,13 @@
             this.btnGestionarPermisos = new System.Windows.Forms.Button();
             this.btnVerDisponibilidad = new System.Windows.Forms.Button();
             this.panelDerecho = new System.Windows.Forms.Panel();
+            this.btnLimpiar = new System.Windows.Forms.Button();
             this.lblRut = new System.Windows.Forms.Label();
             this.txtBuscarRut = new System.Windows.Forms.TextBox();
             this.lblFecha = new System.Windows.Forms.Label();
             this.dtpBuscarFecha = new System.Windows.Forms.DateTimePicker();
             this.btnBuscar = new System.Windows.Forms.Button();
             this.dgvCitas = new System.Windows.Forms.DataGridView();
-            this.btnLimpiar = new System.Windows.Forms.Button();
             this.panelIzquierdo.SuspendLayout();
             this.panelDerecho.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCitas)).BeginInit();
@@ -78,6 +78,7 @@
             this.btnAgendarCita.Size = new System.Drawing.Size(150, 23);
             this.btnAgendarCita.TabIndex = 0;
             this.btnAgendarCita.Text = "Agendar Cita";
+            this.btnAgendarCita.Click += new System.EventHandler(this.btnAgendarCita_Click);
             // 
             // btnGenerarInforme
             // 
@@ -118,6 +119,16 @@
             this.panelDerecho.Name = "panelDerecho";
             this.panelDerecho.Size = new System.Drawing.Size(608, 448);
             this.panelDerecho.TabIndex = 0;
+            // 
+            // btnLimpiar
+            // 
+            this.btnLimpiar.Location = new System.Drawing.Point(486, 15);
+            this.btnLimpiar.Name = "btnLimpiar";
+            this.btnLimpiar.Size = new System.Drawing.Size(83, 24);
+            this.btnLimpiar.TabIndex = 6;
+            this.btnLimpiar.Text = "Limpiar Filtro";
+            this.btnLimpiar.UseVisualStyleBackColor = true;
+            this.btnLimpiar.Click += new System.EventHandler(this.button1_Click);
             // 
             // lblRut
             // 
@@ -175,16 +186,7 @@
             this.dgvCitas.Size = new System.Drawing.Size(582, 387);
             this.dgvCitas.TabIndex = 5;
             this.dgvCitas.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCitas_CellContentClick);
-            // 
-            // btnLimpiar
-            // 
-            this.btnLimpiar.Location = new System.Drawing.Point(486, 15);
-            this.btnLimpiar.Name = "btnLimpiar";
-            this.btnLimpiar.Size = new System.Drawing.Size(83, 24);
-            this.btnLimpiar.TabIndex = 6;
-            this.btnLimpiar.Text = "Limpiar Filtro";
-            this.btnLimpiar.UseVisualStyleBackColor = true;
-            this.btnLimpiar.Click += new System.EventHandler(this.button1_Click);
+            this.dgvCitas.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvCitas_CellFormatting);
             // 
             // MenuOperador
             // 

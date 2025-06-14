@@ -24,13 +24,7 @@ namespace Sistema_Hospital
 
         private void btnBuscar_Click(object sender, EventArgs e)
         {
-            string rut = txtBuscarRut.Text.Trim();
-            DateTime fecha = dtpBuscarFecha.Value.Date;
 
-            // Aquí deberías consultar la base de datos o tu fuente de datos
-            // para filtrar las citas por RUT y fecha, y luego mostrar los resultados en dgvCitas.
-            // Ejemplo:
-            // dgvCitas.DataSource = ObtenerCitasFiltradas(rut, fecha);
         }
 
         private void dgvCitas_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -95,7 +89,7 @@ namespace Sistema_Hospital
                     //abrir conexión
                     conn.Open();
                     //filtrar tabla por rut
-                    string query = "SELECT RutPaciente,IdMedico,FechaHora,Estado,NotasMedicas from cita where RutPaciente = @rut and DATE(FechaHora) >= @fecha;";
+                    string query = "SELECT RutPaciente,IdMedico,FechaHora,Estado,NotasMedicas, gravedad from cita where RutPaciente = @rut and DATE(FechaHora) >= @fecha;";
                     using (MySqlCommand cmd = new MySqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@rut", rut);
@@ -138,7 +132,18 @@ namespace Sistema_Hospital
             {
                 //abrir conexión
                 conn.Open();
-                string query = "SELECT RutPaciente,IdMedico,FechaHora,Estado,NotasMedicas from cita;"; // Consulta para obtener todas las citas
+                string query = @"SELECT 
+                    c.RutPaciente,
+                    c.IdMedico,
+                    c.FechaHora,
+                    c.Estado,
+                    c.NotasMedicas,
+                    CASE
+                        WHEN c.NotasMedicas LIKE '%infarto%' OR c.NotasMedicas LIKE '%fractura%' THEN 'Grave'
+                        WHEN c.NotasMedicas LIKE '%dolor%' OR c.NotasMedicas LIKE '%fiebre%' THEN 'Moderado'
+                        ELSE 'Leve'
+                    END AS Gravedad
+                 FROM cita c;"; // Consulta para obtener todas las citas
                 using (MySqlCommand cmd = new MySqlCommand(query, conn)) // Ejecuta la consulta para obtener todas las citas
                 {
 
@@ -177,6 +182,13 @@ namespace Sistema_Hospital
                         break;
                 }
             }
+        }
+
+        private void btnAgendarCita_Click(object sender, EventArgs e)
+        {
+            AgendarCita agendarForm = new AgendarCita();
+            agendarForm.Show(); // Abre el formulario para agendar una cita
+            this.Close(); // Cierra el formulario actual
         }
     }
 }

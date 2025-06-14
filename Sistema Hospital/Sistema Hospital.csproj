@@ -194,6 +194,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AgendarCita.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AgendarCita.Designer.cs">
+      <DependentUpon>AgendarCita.cs</DependentUpon>
+    </Compile>
     <Compile Include="Login.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -210,6 +216,9 @@
     <Compile Include="Paciente.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AgendarCita.resx">
+      <DependentUpon>AgendarCita.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
     </EmbeddedResource>
