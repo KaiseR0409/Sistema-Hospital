@@ -87,6 +87,7 @@
             this.btnGenerarInforme.Size = new System.Drawing.Size(150, 23);
             this.btnGenerarInforme.TabIndex = 1;
             this.btnGenerarInforme.Text = "Generar Informe";
+            this.btnGenerarInforme.Click += new System.EventHandler(this.btnGenerarInforme_Click);
             // 
             // btnGestionarPermisos
             // 
@@ -95,6 +96,7 @@
             this.btnGestionarPermisos.Size = new System.Drawing.Size(150, 23);
             this.btnGestionarPermisos.TabIndex = 2;
             this.btnGestionarPermisos.Text = "Gestionar Permisos";
+            this.btnGestionarPermisos.Click += new System.EventHandler(this.btnGestionarPermisos_Click);
             // 
             // btnVerDisponibilidad
             // 
@@ -103,6 +105,7 @@
             this.btnVerDisponibilidad.Size = new System.Drawing.Size(150, 23);
             this.btnVerDisponibilidad.TabIndex = 3;
             this.btnVerDisponibilidad.Text = "Ver Disponibilidad";
+            this.btnVerDisponibilidad.Click += new System.EventHandler(this.btnVerDisponibilidad_Click);
             // 
             // panelDerecho
             // 

@@ -1,77 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using MySql.Data.MySqlClient;
-using MySql.Data;
 using System.Security.Cryptography;
-using System.Runtime.CompilerServices;
+using System.Text;
+using System.Windows.Forms;
 
 namespace Sistema_Hospital
 {
     public partial class Login : Form
     {
         //variables
-        
-
-        public static void Logearse(string usuario, string password)
-        {
-            try
-            {
-                //conexión a la base de datos
-                string connectionString = "server=localhost;user=root;password=;database=centroclinico;port=3306;sslmode=none;";
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT * FROM operador WHERE usuario = @usuario;";
-                    using (MySqlCommand command = new MySqlCommand(query, connection))
-                    {
-                        // Calcular el hash de la contraseña ingresada
-                        command.Parameters.AddWithValue("@usuario", usuario);
-
-                        using (MySqlDataReader reader = command.ExecuteReader())
-                        {
-                            // Verificar si hay filas que coinciden con el usuario y la contraseña
-                            if (reader.Read())
-                            {
-                                string password_hash_guardada = reader.GetString("password");
-                                string password_ingresada_hasheada = CalcularHashSHA256(password);
-
-                                if (password_hash_guardada == password_ingresada_hasheada)
-                                {
-                                    
-                                    // Inicio de sesión exitoso
-                                    MessageBox.Show("Inicio de sesión exitoso", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                    MenuOperador menuForm = new MenuOperador();
-                                    
-                                    menuForm.Show();
-
-                                    
-
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Usuario o contraseña incorrectos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
-                            }
-                            else
-                            {
-                                MessageBox.Show("Usuario o contraseña incorrectos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Error al iniciar sesión", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
 
         public Login()
         {
@@ -102,17 +40,69 @@ namespace Sistema_Hospital
 
         private void btnIngresar_Click(object sender, EventArgs e)
         {
-            string usuario = txtUsuario.Text;
-            string password = txtPassword.Text;
+            try
+            {
+                string usuario = txtUsuario.Text;
+                string password = txtPassword.Text;
 
-            if (!string.IsNullOrEmpty(usuario) ||!string.IsNullOrEmpty(password))
-            {
-                Logearse(usuario, password);
-                this.Hide(); // Oculta el formulario de inicio de sesión después de iniciar sesión
+                if (!string.IsNullOrEmpty(usuario) && !string.IsNullOrEmpty(password))
+                {
+                    // Cambia Logearse a que devuelva true si el login es exitoso
+                    if (Logearse(usuario, password))
+                    {
+                        this.Hide(); // Oculta el formulario solo si el login fue exitoso
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Por favor, complete todos los campos.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Por favor, complete todos los campos.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Error al iniciar sesión: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Modifica Logearse para que devuelva bool
+        public static bool Logearse(string usuario, string password)
+        {
+            try
+            {
+                string connectionString = "server=localhost;user=root;password=;database=centroclinico;port=3306;sslmode=none;";
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT * FROM operador WHERE usuario = @usuario;";
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@usuario", usuario);
+
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                string password_hash_guardada = reader.GetString("password");
+                                string password_ingresada_hasheada = CalcularHashSHA256(password);
+
+                                if (password_hash_guardada == password_ingresada_hasheada)
+                                {
+                                    MessageBox.Show("Inicio de sesión exitoso", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    MenuOperador menuForm = new MenuOperador();
+                                    menuForm.Show();
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                MessageBox.Show("Usuario o contraseña incorrectos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error al iniciar sesión", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
         }
 

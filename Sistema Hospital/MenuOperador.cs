@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
-using MySql.Data;
 
 namespace Sistema_Hospital
 {
@@ -20,6 +14,7 @@ namespace Sistema_Hospital
         public MenuOperador()
         {
             InitializeComponent();
+            this.BackColor = Color.FromArgb(184, 255, 249);
         }
 
         private void btnBuscar_Click(object sender, EventArgs e)
@@ -50,6 +45,7 @@ namespace Sistema_Hospital
                     c.FechaHora,
                     c.Estado,
                     c.NotasMedicas,
+                    c.NumeroSala,
                     CASE
                         WHEN c.NotasMedicas LIKE '%infarto%' OR c.NotasMedicas LIKE '%fractura%' THEN 'Grave'
                         WHEN c.NotasMedicas LIKE '%dolor%' OR c.NotasMedicas LIKE '%fiebre%' THEN 'Moderado'
@@ -89,7 +85,19 @@ namespace Sistema_Hospital
                     //abrir conexión
                     conn.Open();
                     //filtrar tabla por rut
-                    string query = "SELECT RutPaciente,IdMedico,FechaHora,Estado,NotasMedicas, gravedad from cita where RutPaciente = @rut and DATE(FechaHora) >= @fecha;";
+                    string query = @"SELECT 
+                    c.RutPaciente,
+                    c.IdMedico,
+                    c.FechaHora,
+                    c.Estado,
+                    c.NotasMedicas,
+                    c.NumeroSala,
+                    CASE
+                        WHEN c.NotasMedicas LIKE '%infarto%' OR c.NotasMedicas LIKE '%fractura%' THEN 'Grave'
+                        WHEN c.NotasMedicas LIKE '%dolor%' OR c.NotasMedicas LIKE '%fiebre%' THEN 'Moderado'
+                        ELSE 'Leve'
+                    END AS Gravedad
+                 FROM cita c where rutPaciente = @rut and DATE(c.FechaHora) >= @fecha;";
                     using (MySqlCommand cmd = new MySqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@rut", rut);
@@ -138,6 +146,7 @@ namespace Sistema_Hospital
                     c.FechaHora,
                     c.Estado,
                     c.NotasMedicas,
+                    c.NumeroSala,
                     CASE
                         WHEN c.NotasMedicas LIKE '%infarto%' OR c.NotasMedicas LIKE '%fractura%' THEN 'Grave'
                         WHEN c.NotasMedicas LIKE '%dolor%' OR c.NotasMedicas LIKE '%fiebre%' THEN 'Moderado'
@@ -189,6 +198,43 @@ namespace Sistema_Hospital
             AgendarCita agendarForm = new AgendarCita();
             agendarForm.Show(); // Abre el formulario para agendar una cita
             this.Close(); // Cierra el formulario actual
+        }
+
+        private void btnGestionarPermisos_Click(object sender, EventArgs e)
+        {
+            GestionarPermisos gestionarPermisos = new GestionarPermisos(); // Crea una instancia del formulario GestionarPermisos
+            gestionarPermisos.Show();
+            this.Hide(); // Oculta el formulario actual
+        }
+
+        private void btnVerDisponibilidad_Click(object sender, EventArgs e)
+        {
+            VerDisponibilidad verDisponibilidad = new VerDisponibilidad(); // Crea una instancia del formulario VerDisponibilidad
+            verDisponibilidad.Show(); // Muestra el formulario VerDisponibilidad
+            
+        }
+
+        private void btnGenerarInforme_Click(object sender, EventArgs e)
+        {
+            if (dgvCitas.CurrentRow != null)
+            {
+                var row = dgvCitas.CurrentRow;
+                string rutPaciente = row.Cells["RutPaciente"].Value?.ToString();
+                string idMedico = row.Cells["IdMedico"].Value?.ToString();
+                string fechaHora = row.Cells["FechaHora"].Value?.ToString();
+                string estado = row.Cells["Estado"].Value?.ToString();
+                string notasMedicas = row.Cells["NotasMedicas"].Value?.ToString();
+                string numeroSala = row.Cells["NumeroSala"].Value?.ToString();
+                string gravedad = row.Cells["Gravedad"].Value?.ToString();
+
+                GenerarInforme generarInforme = new GenerarInforme(
+                    rutPaciente, idMedico, fechaHora, estado, notasMedicas, numeroSala, gravedad);
+                generarInforme.Show();
+            }
+            else
+            {
+                MessageBox.Show("Seleccione una cita de la tabla.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
     }
 }

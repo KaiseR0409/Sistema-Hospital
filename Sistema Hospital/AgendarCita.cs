@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
-using MySql.Data;
 
 namespace Sistema_Hospital
 {
@@ -17,9 +10,16 @@ namespace Sistema_Hospital
     {
         string connectionString = "server=localhost;user=root;password=;database=centroclinico;port=3306;sslmode=none;";
 
+        // Agrega este campo en la declaración de variables de la clase
+
+
         public AgendarCita()
         {
             InitializeComponent();
+            this.BackColor = Color.FromArgb(184, 255, 249); //cambia el color de fondo del formulario
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.FormBorderStyle = FormBorderStyle.FixedDialog; // Evita que el usuario pueda redimensionar el formulario
+
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
                 try
@@ -72,12 +72,6 @@ namespace Sistema_Hospital
             var medicoSeleccionado = cbMedicos.SelectedItem as ComboboxItem;
             int idMedico = (int)medicoSeleccionado.Value;
 
-            if(!String.IsNullOrEmpty(rut) || !String.IsNullOrEmpty(nombre) || !String.IsNullOrEmpty(especialidad) || 
-               !String.IsNullOrEmpty(doctor) || !String.IsNullOrEmpty(sala))
-            {
-                MessageBox.Show("Por favor, complete todos los campos.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 try
